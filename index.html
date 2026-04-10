@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sajin Santhosh — Mechanical Design Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ===== RESET & ROOT ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #080b10;
+  --bg2:       #0d1117;
+  --bg3:       #111720;
+  --cyan:      #00d4ff;
+  --cyan-dim:  rgba(0,212,255,0.12);
+  --cyan-glow: rgba(0,212,255,0.35);
+  --purple:    #7b2fff;
+  --text:      #dde6f0;
+  --muted:     #5a6a7a;
+  --border:    rgba(0,212,255,0.15);
+  --card-bg:   rgba(13,17,23,0.85);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ===== BLUEPRINT GRID BACKGROUND ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
+
+/* ===== UTILITIES ===== */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+.section { padding: 100px 0; }
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 48px;
+}
+.section-title span { color: var(--cyan); }
+.glow-line {
+  width: 60px;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+  margin-bottom: 48px;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 999;
+  padding: 0 24px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s, border-bottom 0.3s;
+}
+nav.scrolled {
+  background: rgba(8,11,16,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--cyan); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--cyan); }
+.btn-resume {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cyan) !important;
+  border: 1px solid var(--cyan);
+  padding: 8px 18px;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-resume:hover {
+  background: var(--cyan-dim);
+  box-shadow: 0 0 18px var(--cyan-glow);
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--cyan);
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 68px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.hero-orb-1 {
+  width: 500px; height: 500px;
+  background: rgba(0,212,255,0.06);
+  top: -100px; right: -100px;
+}
+.hero-orb-2 {
+  width: 400px; height: 400px;
+  background: rgba(123,47,255,0.06);
+  bottom: 0; left: -80px;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-tag::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.hero-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 0.95;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+.hero-name .first { display: block; }
+.hero-name .last {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255,255,255,0.6);
+}
+.hero-typed-wrapper {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 24px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.typed-prefix { color: var(--cyan); }
+#typed-text { color: var(--text); }
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: var(--cyan);
+  animation: blink 0.8s infinite;
+  margin-left: 2px;
+  vertical-align: middle;
+}
+@keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+.hero-tagline {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 520px;
+  margin-bottom: 40px;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+}
+.hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: var(--cyan);
+  color: var(--bg);
+  padding: 14px 28px;
+  border-radius: 3px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 28px var(--cyan-glow);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 28px;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.btn-outline:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 14px var(--cyan-dim);
+}
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.stat-num {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--cyan);
+  line-height: 1;
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ===== ABOUT ===== */
+#about { background: var(--bg2); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.about-bio {
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.8;
+  font-weight: 300;
+  margin-bottom: 24px;
+}
+.about-bio strong { color: var(--cyan); font-weight: 500; }
+.about-highlights { display: flex; flex-direction: column; gap: 14px; }
+.highlight-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.highlight-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px var(--cyan-dim);
+}
+.highlight-icon {
+  font-size: 1.4rem;
+  min-width: 36px;
+  text-align: center;
+}
+.highlight-text { font-size: 0.88rem; color: var(--text); line-height: 1.4; }
+.highlight-text strong { color: var(--cyan); font-weight: 500; display: block; font-size: 0.92rem; }
+
+/* ===== SKILLS ===== */
+.skills-grid { display: flex; flex-direction: column; gap: 36px; }
+.skill-group-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.skill-group-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.skill-badges { display: flex; flex-wrap: wrap; gap: 10px; }
+.skill-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 7px 14px;
+  border-radius: 3px;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.skill-badge:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan-dim);
+}
+
+/* ===== PROJECTS ===== */
+#projects { background: var(--bg2); }
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.filter-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: var(--cyan-dim);
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+.project-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(8px);
+}
+.project-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 8px 40px rgba(0,212,255,0.1);
+  transform: translateY(-4px);
+}
+.project-card.hidden { display: none; }
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.project-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.tag-professional { color: var(--cyan); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.06); }
+.tag-freelance { color: #ff9f43; border-color: rgba(255,159,67,0.3); background: rgba(255,159,67,0.06); }
+.tag-academic { color: var(--purple); border-color: rgba(123,47,255,0.3); background: rgba(123,47,255,0.06); }
+.project-icon { font-size: 1.6rem; }
+.project-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.project-company {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.project-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+  flex: 1;
+  margin-bottom: 20px;
+}
+.project-outcome {
+  font-size: 0.82rem;
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.3px;
+}
+.project-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.tool-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+/* ===== EXPERIENCE ===== */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px; bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--cyan), var(--purple), transparent);
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 48px;
+  padding: 28px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.timeline-item:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 24px var(--cyan-dim);
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -36px; top: 32px;
+  width: 10px; height: 10px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--cyan);
+}
+.exp-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.exp-role {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+.exp-period {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+.exp-company {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+.exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.exp-bullets li {
+  font-size: 0.88rem;
+  color: var(--text);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.6;
+}
+.exp-bullets li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--cyan);
+  font-size: 0.7rem;
+  top: 3px;
+}
+.exp-projects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.exp-project-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--purple);
+  border: 1px solid rgba(123,47,255,0.3);
+  background: rgba(123,47,255,0.06);
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== EDUCATION & CERTS ===== */
+#edu { background: var(--bg2); }
+.edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 56px; }
+.edu-card {
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+.edu-card:hover { border-color: var(--cyan); }
+.edu-degree {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.edu-institution {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.edu-meta { display: flex; gap: 12px; align-items: center; }
+.edu-grade {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+.edu-year {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.certs-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 24px;
+}
+.certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.cert-card {
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  border-radius: 4px;
+  transition: box-shadow 0.2s;
+}
+.cert-card:hover { box-shadow: 0 0 16px var(--cyan-dim); }
+.cert-name { font-size: 0.92rem; color: #fff; font-weight: 500; margin-bottom: 6px; line-height: 1.3; }
+.cert-issuer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+/* ===== CONTACT ===== */
+.contact-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.contact-intro h3 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.contact-intro p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.contact-cards { display: flex; flex-direction: column; gap: 14px; }
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.contact-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px var(--cyan-dim);
+}
+.contact-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--cyan-dim);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  min-width: 40px;
+}
+.contact-info-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.contact-info-value { font-size: 0.9rem; color: var(--text); }
+
+/* Contact Form */
+.contact-form { display: flex; flex-direction: column; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.form-input, .form-textarea {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: none;
+}
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-dim);
+}
+.form-textarea { min-height: 120px; }
+.btn-send {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--cyan);
+  color: var(--bg);
+  padding: 14px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.btn-send:hover {
+  box-shadow: 0 0 24px var(--cyan-glow);
+  transform: translateY(-2px);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+}
+.footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+.footer-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--cyan); }
+.footer-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.footer-copy span { color: var(--cyan); }
+
+/* ===== FADE IN ON SCROLL ===== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== MOBILE NAV ===== */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    position: fixed;
+    top: 68px; left: 0; right: 0;
+    background: rgba(8,11,16,0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    gap: 24px;
+    transform: translateY(-120%);
+    transition: transform 0.3s;
+    z-index: 998;
+  }
+  .nav-links.open { transform: translateY(0); }
+  .nav-links a { font-size: 14px; }
+
+  /* ABOUT */
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+
+  /* CONTACT */
+  .contact-wrapper { grid-template-columns: 1fr; gap: 40px; }
+
+  /* EDU */
+  .edu-grid { grid-template-columns: 1fr; }
+
+  /* PROJECTS */
+  .projects-grid { grid-template-columns: 1fr; }
+
+  /* HERO */
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+
+  .section { padding: 72px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Sajin<span>.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" onclick="closeNav()">About</a></li>
+    <li><a href="#skills" onclick="closeNav()">Skills</a></li>
+    <li><a href="#projects" onclick="closeNav()">Projects</a></li>
+    <li><a href="#experience" onclick="closeNav()">Experience</a></li>
+    <li><a href="#contact" onclick="closeNav()">Contact</a></li>
+    <li><a href="Sajin_Santhosh_Resume.pdf" download class="btn-resume">Resume</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag">Mechanical Design Engineer</div>
+      <h1 class="hero-name">
+        <span class="first">Sajin</span>
+        <span class="last">Santhosh</span>
+      </h1>
+      <div class="hero-typed-wrapper">
+        <span class="typed-prefix">//</span>
+        <span id="typed-text"></span>
+        <span class="cursor"></span>
+      </div>
+      <p class="hero-tagline">Turning concepts into production-ready engineering — from first sketch to final build. Specialised in DFM/DFA, advanced CAD, and end-to-end NPD Stage-Gate execution.</p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-primary">View My Work</a>
+        <a href="Sajin_Santhosh_Resume.pdf" download class="btn-outline">Download Resume</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">2+</div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+        <div>
+          <div class="stat-num">8+</div>
+          <div class="stat-label">Projects Delivered</div>
+        </div>
+        <div>
+          <div class="stat-num">3</div>
+          <div class="stat-label">Product Categories</div>
+        </div>
+        <div>
+          <div class="stat-num">🏆</div>
+          <div class="stat-label">ASME 2nd Prize</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-label">01 / About</div>
+    <h2 class="section-title">Who I <span>Am</span></h2>
+    <div class="about-grid">
+      <div>
+        <p class="about-bio">
+          I'm <strong>Sajin Santhosh</strong>, a Mechanical Design Engineer with <strong>2+ years of hands-on experience</strong> delivering medical devices, sanitation robots, and special-purpose machines at GenRobotics Innovation Pvt Ltd.
+        </p>
+        <p class="about-bio">
+          I specialise in <strong>SolidWorks and Fusion 360</strong>, with deep expertise in DFM/DFA, FEA analysis, GD&T, and end-to-end NPD Stage-Gate product development. I drive products from first concept through to production-ready builds — owning design, documentation, and cross-functional collaboration throughout.
+        </p>
+        <p class="about-bio">
+          I'm currently <strong>open to full-time roles and freelance projects</strong> where I can contribute to building impactful, well-engineered products.
+        </p>
+      </div>
+      <div class="about-highlights fade-up">
+        <div class="highlight-card">
+          <div class="highlight-icon">🎓</div>
+          <div class="highlight-text">
+            <strong>B.Tech — Mechanical Engineering</strong>
+            Mar Athanasios College of Engineering, Kerala (2021–2024)
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">📍</div>
+          <div class="highlight-text">
+            <strong>Based in Kerala, India</strong>
+            Open to relocation and remote opportunities
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">💼</div>
+          <div class="highlight-text">
+            <strong>2+ Years Industry Experience</strong>
+            Medical devices, robots & special-purpose machines
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🏆</div>
+          <div class="highlight-text">
+            <strong>ASME EFx India Series 2023 — 2nd Prize</strong>
+            Precision Dispensing Container Design
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🌐</div>
+          <div class="highlight-text">
+            <strong>Languages</strong>
+            English · Malayalam · Hindi
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SKILLS ===== -->
+<section id="skills" class="section">
+  <div class="container">
+    <div class="section-label">02 / Skills</div>
+    <h2 class="section-title">Technical <span>Arsenal</span></h2>
+    <div class="skills-grid fade-up">
+      <div>
+        <div class="skill-group-title">CAD & Design Software</div>
+        <div class="skill-badges">
+          <span class="skill-badge">SolidWorks</span>
+          <span class="skill-badge">Fusion 360</span>
+          <span class="skill-badge">AutoCAD</span>
+          <span class="skill-badge">Autodesk Inventor</span>
+          <span class="skill-badge">Solid Edge</span>
+          <span class="skill-badge">Creo</span>
+          <span class="skill-badge">ANSYS (FEA)</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Manufacturing & Fabrication</div>
+        <div class="skill-badges">
+          <span class="skill-badge">Sheet Metal Fabrication</span>
+          <span class="skill-badge">CNC Machining</span>
+          <span class="skill-badge">Laser Cutting</span>
+          <span class="skill-badge">3D Printing / Rapid Prototyping</span>
+          <span class="skill-badge">Injection Moulding</span>
+          <span class="skill-badge">Casting Design</span>
+          <span class="skill-badge">Weldments</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Design Methods</div>
+        <div class="skill-badges">
+          <span class="skill-badge">DFM / DFA</span>
+          <span class="skill-badge">GD&T</span>
+          <span class="skill-badge">DFMEA</span>
+          <span class="skill-badge">FEA Analysis</span>
+          <span class="skill-badge">Mechanism Design</span>
+          <span class="skill-badge">Stage-Gate NPD</span>
+          <span class="skill-badge">BOM Management</span>
+          <span class="skill-badge">Tolerance Stack-Up</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Documentation & Collaboration</div>
+        <div class="skill-badges">
+          <span class="skill-badge">Manufacturing Drawings</span>
+          <span class="skill-badge">Assembly Drawings</span>
+          <span class="skill-badge">Installation Manuals</span>
+          <span class="skill-badge">Cross-functional Teams</span>
+          <span class="skill-badge">MS Office</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROJECTS ===== -->
+<section id="projects" class="section">
+  <div class="container">
+    <div class="section-label">03 / Projects</div>
+    <h2 class="section-title">Work I've <span>Built</span></h2>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterProjects('all', this)">All</button>
+      <button class="filter-btn" onclick="filterProjects('professional', this)">Professional</button>
+      <button class="filter-btn" onclick="filterProjects('freelance', this)">Freelance</button>
+      <button class="filter-btn" onclick="filterProjects('academic', this)">Academic</button>
+    </div>
+    <div class="projects-grid">
+
+      <!-- G-Gaiter Pediatrics -->
+      <div class="project-card fade-up" data-category="professional">
+        <div class="project-header">
+          <span class="project-tag tag-professional">Professional</span>
+          <span class="project-icon">🦿</span>
+        </div>
+        <div class="project-title">G-Gaiter Pediatrics</div>
+        <div class="project-company">GenRobotics Innovation Pvt Ltd</div>
+        <p class="project-desc">Led end-to-end NPD Stage-Gate execution for an advanced pediatric gait training device. Resolved first-prototype non-conformities and drove the product from development to production-ready stage. Owned full documentation suite: BOMs, manufacturing drawings, and installation manuals.</p>
+        <div class="project-outcome">✦ Prototype → Production-ready system delivered</div>
+        <div class="project-tools">
+          <span class="tool-pill">SolidWorks</span>
+          <span class="tool-pill">DFM/DFA</span>
+          <span class="tool-pill">GD&T</span>
+          <span class="tool-pill">BOM Management</span>
+        </div>
+      </div>
+
+      <!-- G-Gaiter V1 & V2 -->
+      <div class="project-card fade-up" data-category="professional">
+        <div class="project-header">
+          <span class="project-tag tag-professional">Professional</span>
+          <span class="project-icon">⚙️</span>
+        </div>
+        <div class="project-title">G-Gaiter V1.0 & V2.0</div>
+        <div class="project-company">GenRobotics Innovation Pvt Ltd</div>
+        <p class="project-desc">Designed and validated actuated pelvic and ankle joint mechanisms across two major design versions. Applied DFMEA, material optimization, and DFM to reduce part count, cost, and weight. Integrated ergonomic customer requirements including height reduction and new treadmill dimensions.</p>
+        <div class="project-outcome">✦ All V2.0 customer requirements met; cost & weight reduced</div>
+        <div class="project-tools">
+          <span class="tool-pill">SolidWorks</span>
+          <span class="tool-pill">DFMEA</span>
+          <span class="tool-pill">3D Printing</span>
+          <span class="tool-pill">DFM/DFA</span>
+        </div>
+      </div>
+
+      <!-- GENBOT -->
+      <div class="project-card fade-up" data-category="professional">
+        <div class="project-header">
+          <span class="project-tag tag-professional">Professional</span>
+          <span class="project-icon">🤖</span>
+        </div>
+        <div class="project-title">GENBOT Semi-Humanoid Robot</div>
+        <div class="project-company">GenRobotics Innovation Pvt Ltd</div>
+        <p class="project-desc">Created laser-cut and CNC-machined fabrication drawings using GD&T. Designed complete hydraulic line routing and electronic cable pathways through the robot structure — ensuring zero interference with moving joints and safe, maintainable operation.</p>
+        <div class="project-outcome">✦ Zero motion interference; production drawings delivered</div>
+        <div class="project-tools">
+          <span class="tool-pill">SolidWorks</span>
+          <span class="tool-pill">GD&T</span>
+          <span class="tool-pill">CNC</span>
+          <span class="tool-pill">Laser Cutting</span>
+        </div>
+      </div>
+
+      <!-- DRACO ROV -->
+      <div class="project-card fade-up" data-category="professional">
+        <div class="project-header">
+          <span class="project-tag tag-professional">Professional</span>
+          <span class="project-icon">🌊</span>
+        </div>
+        <div class="project-title">DRACO Hydraulic ROV</div>
+        <div class="project-company">GenRobotics Innovation Pvt Ltd</div>
+        <p class="project-desc">Developed fabrication drawings and control panel enclosures for hydraulic and electronic systems. Performed buoyancy and drag force calculations; produced full technical documentation for the underwater remotely operated vehicle.</p>
+        <div class="project-outcome">✦ Full technical documentation and enclosures delivered</div>
+        <div class="project-tools">
+          <span class="tool-pill">SolidWorks</span>
+          <span class="tool-pill">AutoCAD</span>
+          <span class="tool-pill">Hydraulic Systems</span>
+        </div>
+      </div>
+
+      <!-- SPM Butter -->
+      <div class="project-card fade-up" data-category="freelance">
+        <div class="project-header">
+          <span class="project-tag tag-freelance">Freelance</span>
+          <span class="project-icon">🏭</span>
+        </div>
+        <div class="project-title">Butter Sachet Packaging Machine</div>
+        <div class="project-company">Special Purpose Machine — Freelance</div>
+        <p class="project-desc">Designed and detailed a special-purpose machine for automated butter sachet packaging. Performed tolerance stack-up analysis, resolved assembly clashes, and prepared machining and laser-cut fabrication drawings for a repeatable production-ready machine.</p>
+        <div class="project-outcome">✦ Reliable, repeatable SPM assembly delivered to client</div>
+        <div class="project-tools">
+          <span class="tool-pill">SolidWorks</span>
+          <span class="tool-pill">GD&T</span>
+          <span class="tool-pill">Tolerance Stack-Up</span>
+          <span class="tool-pill">Laser Cut Drawings</span>
+        </div>
+      </div>
+
+      <!-- Decorticator -->
+      <div class="project-card fade-up" data-category="academic">
+        <div class="project-header">
+          <span class="project-tag tag-academic">Academic</span>
+          <span class="project-icon">🌿</span>
+        </div>
+        <div class="project-title">Multifiber Decorticator</div>
+        <div class="project-company">B.Tech Final Year Project — 2023–2024</div>
+        <p class="project-desc">Designed an innovative multi-fiber extraction machine for pineapple leaf, water hyacinth, and banana fibres. Performed FEA on all critical structural members, shaft design, and bearing selection. Achieved 10x cost reduction vs. market alternatives through DFM and material optimization. Led full prototype build and testing.</p>
+        <div class="project-outcome">✦ 10x cost reduction; working prototype validated</div>
+        <div class="project-tools">
+          <span class="tool-pill">Fusion 360</span>
+          <span class="tool-pill">FEA / ANSYS</span>
+          <span class="tool-pill">DFM</span>
+          <span class="tool-pill">Rapid Prototyping</span>
+        </div>
+      </div>
+
+      <!-- ASME -->
+      <div class="project-card fade-up" data-category="academic">
+        <div class="project-header">
+          <span class="project-tag tag-academic">Academic</span>
+          <span class="project-icon">🏆</span>
+        </div>
+        <div class="project-title">Precision Dispensing Container</div>
+        <div class="project-company">ASME EFx India Series 2023</div>
+        <p class="project-desc">Designed a controlled precision dispensing system for the ASME national-level engineering competition — secured 2nd prize competing against top engineering teams from across India. Demonstrated strong DFM and innovation-focused design thinking.</p>
+        <div class="project-outcome">✦ 🥈 2nd Prize — ASME National Design Competition</div>
+        <div class="project-tools">
+          <span class="tool-pill">SolidWorks</span>
+          <span class="tool-pill">Product Design</span>
+          <span class="tool-pill">DFM</span>
+        </div>
+      </div>
+
+      <!-- E-Bike -->
+      <div class="project-card fade-up" data-category="academic">
+        <div class="project-header">
+          <span class="project-tag tag-academic">Academic</span>
+          <span class="project-icon">⚡</span>
+        </div>
+        <div class="project-title">Electric Bike Development</div>
+        <div class="project-company">Diploma Final Year Project — 2021</div>
+        <p class="project-desc">Integrated an electric motor into a pedal bicycle through mechanical modifications — including motor mounting, power transmission design, and structural adaptation of the existing frame. Demonstrated hands-on fabrication and electro-mechanical integration skills.</p>
+        <div class="project-outcome">✦ Functional electric bike prototype built & demonstrated</div>
+        <div class="project-tools">
+          <span class="tool-pill">AutoCAD</span>
+          <span class="tool-pill">Mechanical Fabrication</span>
+          <span class="tool-pill">Power Transmission</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXPERIENCE ===== -->
+<section id="experience" class="section">
+  <div class="container">
+    <div class="section-label">04 / Experience</div>
+    <h2 class="section-title">Where I've <span>Worked</span></h2>
+    <div class="timeline">
+
+      <div class="timeline-item fade-up">
+        <div class="exp-header">
+          <div class="exp-role">Mechanical Design Engineer</div>
+          <div class="exp-period">Jun 2024 — Mar 2026</div>
+        </div>
+        <div class="exp-company">GenRobotics Innovation Pvt Ltd · Kerala, India</div>
+        <ul class="exp-bullets">
+          <li>Led end-to-end NPD Stage-Gate execution for G-Gaiter Pediatrics gait training device — from prototype to production-ready stage, managing all stage-gate deliverables</li>
+          <li>Designed and validated actuated pelvic and ankle joint mechanisms for G-Gaiter V1.0 & V2.0; applied DFMEA for failure mode identification and resolution</li>
+          <li>Achieved measurable cost and weight reduction through material optimization and custom part redesign, directly impacting BOM cost targets</li>
+          <li>Created laser-cut and CNC-machined fabrication drawings with full GD&T for GENBOT semi-humanoid robot; routed hydraulic and electronic cable pathways</li>
+          <li>Developed fabrication drawings and control panel enclosures for DRACO hydraulic ROV; performed buoyancy and drag force calculations</li>
+          <li>Owned full documentation: BOMs, manufacturing & assembly drawings, and installation manuals aligned with DFM/DFA principles</li>
+        </ul>
+        <div class="exp-projects">
+          <span class="exp-project-tag">G-Gaiter Pediatrics</span>
+          <span class="exp-project-tag">G-Gaiter V1.0 & V2.0</span>
+          <span class="exp-project-tag">GENBOT</span>
+          <span class="exp-project-tag">DRACO ROV</span>
+        </div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="exp-header">
+          <div class="exp-role">Freelance Mechanical Designer</div>
+          <div class="exp-period">Ongoing</div>
+        </div>
+        <div class="exp-company">Independent · Remote</div>
+        <ul class="exp-bullets">
+          <li>Designed and detailed special-purpose machine for automated butter sachet packaging — tolerance stack-up, assembly drawings, machining and laser-cut fabrication drawings</li>
+          <li>Provided enclosure design and 3D printing services for clients</li>
+          <li>Delivered production-ready sheet metal, machining, and fabrication drawings for client-specific requirements</li>
+        </ul>
+        <div class="exp-projects">
+          <span class="exp-project-tag">Butter Sachet SPM</span>
+          <span class="exp-project-tag">Enclosure Design</span>
+          <span class="exp-project-tag">3D Printing</span>
+        </div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="exp-header">
+          <div class="exp-role">Mechanical Engineering Intern</div>
+          <div class="exp-period">May 2023 · 1 Month</div>
+        </div>
+        <div class="exp-company">BEML Limited · KGF, Karnataka, India</div>
+        <ul class="exp-bullets">
+          <li>Observed large-scale assembly operations and workflow processes in a heavy machinery manufacturing environment</li>
+          <li>Studied metal fabrication and heat treatment techniques, gaining practical insights into industrial production methods</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== EDUCATION & CERTS ===== -->
+<section id="edu" class="section">
+  <div class="container">
+    <div class="section-label">05 / Education</div>
+    <h2 class="section-title">Academic <span>Background</span></h2>
+    <div class="edu-grid fade-up">
+      <div class="edu-card">
+        <div class="edu-degree">B.Tech — Mechanical Engineering</div>
+        <div class="edu-institution">Mar Athanasios College of Engineering, Kerala</div>
+        <div class="edu-meta">
+          <span class="edu-grade">CGPA 7.16 / 10</span>
+          <span class="edu-year">2021 – 2024</span>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Diploma — Mechanical Engineering</div>
+        <div class="edu-institution">Central Polytechnic College, Kerala</div>
+        <div class="edu-meta">
+          <span class="edu-grade">CGPA 7.93 / 10</span>
+          <span class="edu-year">2018 – 2021</span>
+        </div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Higher Secondary — Bioscience</div>
+        <div class="edu-institution">Govt HSS, Kulathoor, Kerala</div>
+        <div class="edu-meta">
+          <span class="edu-grade">89%</span>
+          <span class="edu-year">2016 – 2018</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="certs-title">Certifications</div>
+    <div class="certs-grid fade-up">
+      <div class="cert-card">
+        <div class="cert-name">SolidWorks Advanced Bootcamp</div>
+        <div class="cert-issuer">Ilahiya College of Engineering · Oct 2024</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-name">Manufacturing Processes — Casting & Joining</div>
+        <div class="cert-issuer">NPTEL · Jul – Aug 2023</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-name">Autodesk Fusion 360 Training</div>
+        <div class="cert-issuer">Autodesk Authorized Training Center · Mar 2023</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-name">ASME EFx India Series</div>
+        <div class="cert-issuer">ASME · December 2023</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="section">
+  <div class="container">
+    <div class="section-label">06 / Contact</div>
+    <h2 class="section-title">Let's <span>Connect</span></h2>
+    <div class="contact-wrapper">
+      <div>
+        <div class="contact-intro">
+          <h3>Open to Opportunities</h3>
+          <p>Whether you're hiring a design engineer, need a freelance mechanical designer, or want to discuss a product idea — I'd love to hear from you. Let's build something great.</p>
+        </div>
+        <div class="contact-cards">
+          <a href="mailto:sajinsanthosh009@gmail.com" class="contact-card">
+            <div class="contact-icon">📧</div>
+            <div>
+              <div class="contact-info-type">Email</div>
+              <div class="contact-info-value">sajinsanthosh009@gmail.com</div>
+            </div>
+          </a>
+          <a href="tel:+917902731681" class="contact-card">
+            <div class="contact-icon">📞</div>
+            <div>
+              <div class="contact-info-type">Phone</div>
+              <div class="contact-info-value">+91 7902731681</div>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/sajin-santhosh" target="_blank" class="contact-card">
+            <div class="contact-icon">💼</div>
+            <div>
+              <div class="contact-info-type">LinkedIn</div>
+              <div class="contact-info-value">linkedin.com/in/sajin-santhosh</div>
+            </div>
+          </a>
+          <a href="https://grabcad.com" target="_blank" class="contact-card">
+            <div class="contact-icon">🐙</div>
+            <div>
+              <div class="contact-info-type">Portfolio / CAD Models</div>
+              <div class="contact-info-value">Add your GrabCAD / GitHub link</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" placeholder="John Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" placeholder="john@company.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-textarea" placeholder="Tell me about your project or opportunity..." required></textarea>
+          </div>
+          <button type="submit" class="btn-send">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== */-->
+<footer>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+    <a href="Sajin_Santhosh_Resume.pdf" download>Resume</a>
+  </div>
+  <div class="footer-copy">© 2025 <span>Sajin Santhosh</span>. All rights reserved. — Mechanical Design Engineer</div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+/* --- Navbar scroll --- */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* --- Mobile nav --- */
+function toggleNav() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeNav() {
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+/* --- Typed animation --- */
+const phrases = [
+  'CAD & Product Design Specialist',
+  'DFM / DFA Expert',
+  'NPD Stage-Gate Engineer',
+  'Mechanism Designer',
+  'Problem Solver'
+];
+let phraseIndex = 0, charIndex = 0, deleting = false;
+const typedEl = document.getElementById('typed-text');
+
+function type() {
+  const current = phrases[phraseIndex];
+  if (!deleting) {
+    typedEl.textContent = current.slice(0, charIndex + 1);
+    charIndex++;
+    if (charIndex === current.length) {
+      deleting = true;
+      setTimeout(type, 1800);
+      return;
+    }
+  } else {
+    typedEl.textContent = current.slice(0, charIndex - 1);
+    charIndex--;
+    if (charIndex === 0) {
+      deleting = false;
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+    }
+  }
+  setTimeout(type, deleting ? 40 : 65);
+}
+type();
+
+/* --- Project filter --- */
+function filterProjects(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.project-card').forEach(card => {
+    const show = cat === 'all' || card.dataset.category === cat;
+    card.classList.toggle('hidden', !show);
+  });
+}
+
+/* --- Scroll fade-in --- */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+/* --- Contact form (mailto fallback) --- */
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const name = form.querySelector('input[type="text"]').value;
+  const email = form.querySelector('input[type="email"]').value;
+  const msg = form.querySelector('textarea').value;
+  window.location.href = `mailto:sajinsanthosh009@gmail.com?subject=Portfolio Inquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(msg + '\n\nFrom: ' + name + '\nEmail: ' + email)}`;
+}
+</script>
+</body>
+</html>
